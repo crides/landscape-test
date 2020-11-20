@@ -16,7 +16,6 @@ window.urb = new window.channel();
 
 subscription.start();
 
-window.subscriptionId = window.urb.subscribe("zod", "test", "/poke-primary", () => alert("conn"), (j) => alert(j), () => alert("kick"))
 ReactDOM.render((
   <Root />
 ), document.querySelectorAll("#root")[0]);

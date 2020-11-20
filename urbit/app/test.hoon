@@ -3,6 +3,9 @@
 |%
 +$  state-ty  (map @t @t)
 +$  card  card:agent:gall
+++  ret-url
+  |=  u=(unit cord)  ^-  card
+  [%give %fact ~[/poke-primary] %json !>((json [%s (fall u '')]))]
 --
 =/  pokes=state-ty  *state-ty
 ^-  agent:gall
@@ -27,10 +30,10 @@
   ?:  ?=([%http-response *] path)
     `this
   ~&  >  path=path
-  ?.  =(/ path)
+  ?.  =(/poke-primary path)
     (on-watch:def path)
-  :: `this
-  [[%give %fact ~ %json !>((json [%s 'event']))]~ this]
+  :_  this
+  ~[[%give %watch-ack ~]]
 ::
 ++  on-agent  on-agent:def
 ::
@@ -54,7 +57,7 @@
     ?~  fetched
       ~&  >>>  'Not found'
       :_  this
-      ~[[%give %fact ~[/poke-primary] %json !>((json [%s 'Not found']))]]
+      ~[(ret-url ~)]
     =,  dejs:format
     =/  info
       %.  u.fetched  %-  ot
@@ -65,9 +68,7 @@
     ~&  >>  info+info
     =.  pokes  (~(put by pokes) -.info +.info)
     :_  this
-    :~
-      [%give %fact ~[/poke-primary] %json !>((json [%s +.info]))]
-    ==
+    ~[(ret-url `+.info)]
   --
 ::
 ++  on-poke
@@ -79,7 +80,7 @@
   ~&  >  info+info
   ?^  info
     :_  this
-    ~[[%give %fact ~[/poke-primary] %json !>((json [%s u.info]))]]
+    ~[(ret-url `+.info)]
   =/  url  (crip "https://pokeapi.co/api/v2/pokemon/{(trip name)}")
   :_  this
   :~
